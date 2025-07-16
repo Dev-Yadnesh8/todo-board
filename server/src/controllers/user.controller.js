@@ -72,6 +72,7 @@ const signUp = asyncHandler(async (req, res) => {
 const signIn = asyncHandler(async (req, res) => {
   //Step1 : Get data from user and validate it using zod.
   const result = UserValidator.validateSignUp(req.body);
+  console.log("Controller result in Signin", result);
 
   if (!result.success) {
     throw new ApiError(422, "Validation error", result.errors);

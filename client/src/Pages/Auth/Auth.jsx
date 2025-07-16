@@ -4,6 +4,13 @@ import { useForm } from "react-hook-form";
 import { Button, InputField } from "../../Components";
 import { authSchema } from "../../Utils/Validators/auth.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { axiosInstance } from "../../Utils/api/axios";
+import {
+  SIGN_IN_ENPOINT,
+  SIGN_UP_ENPOINT,
+} from "../../Utils/api/api_endpoints";
+import toast from "react-hot-toast";
+import handleApiError from "../../Utils/api/handle_api_error";
 
 function AuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -16,9 +23,32 @@ function AuthPage() {
     resolver: zodResolver(authSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("✅ Form Data:", data);
+    try {
+      const response = await sendConditionalRequest(data);
+      console.log("RES--", response);
+
+      const result = response.data;
+      if (!result.success) {
+        console.error(result.message);
+        toast.error(result.message);
+        return;
+      }
+      toast.success(result.message);
+      console.log("request successful", result.message);
+    } catch (error) {
+      handleApiError(error, isSignIn ? SIGN_IN_ENPOINT : SIGN_UP_ENPOINT);
+    }
   };
+
+  async function sendConditionalRequest(data) {
+    return isSignIn
+      ? await axiosInstance.post(SIGN_IN_ENPOINT, data, {
+          withCredentials: true,
+        })
+      : await axiosInstance.post(SIGN_UP_ENPOINT, data);
+  }
 
   return (
     <div
