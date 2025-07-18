@@ -5,11 +5,17 @@ function InputField({
   value,
   onChange,
   placeholder,
+  endIcon,
   ...rest
 }) {
   return (
     <div
-      style={{ marginBottom: "1rem", display: "flex", flexDirection: "column" }}
+      style={{
+        marginBottom: "1rem",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+      }}
     >
       <label
         htmlFor={name}
@@ -31,9 +37,22 @@ function InputField({
           borderRadius: "10px",
           fontSize: "1rem",
           outline: "none",
+          paddingRight: endIcon ? "2.5rem" : "1rem",
         }}
         {...rest}
       />
+      {endIcon && (
+        <span
+          style={{
+            position: "absolute",
+            right: "12px",
+            top: "43px",
+            cursor: "pointer",
+          }}
+        >
+          {endIcon}
+        </span>
+      )}
     </div>
   );
 }

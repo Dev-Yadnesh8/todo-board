@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { Eye, EyeOff } from "lucide-react";
 import { Button, InputField } from "../../Components";
 import { authSchema } from "../../Utils/Validators/auth.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,8 @@ import handleApiError from "../../Utils/api/handle_api_error";
 
 function AuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -26,6 +28,7 @@ function AuthPage() {
   const onSubmit = async (data) => {
     console.log("✅ Form Data:", data);
     try {
+      setLoading(true);
       const response = await sendConditionalRequest(data);
       console.log("RES--", response);
 
@@ -39,6 +42,8 @@ function AuthPage() {
       console.log("request successful", result.message);
     } catch (error) {
       handleApiError(error, isSignIn ? SIGN_IN_ENPOINT : SIGN_UP_ENPOINT);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,9 +117,25 @@ function AuthPage() {
             {...register("password")}
             label="Password"
             placeholder="Enter your password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
+            endIcon={
+              showPassword ? (
+                <EyeOff
+                  size={18}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <Eye
+                  size={18}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowPassword(true)}
+                />
+              )
+            }
           />
+
           {errors.password && (
             <p style={{ color: "red", margin: "4px 0 10px" }}>
               {errors.password.message}
@@ -122,8 +143,12 @@ function AuthPage() {
           )}
 
           <div style={{ marginTop: "1.5rem", marginBottom: "1rem" }}>
-            <Button type="submit">
-              {isSignIn ? "Log In" : "Create Account"}
+            <Button type="submit" disabled={loading}>
+              {loading
+                ? "Loading ...."
+                : isSignIn
+                ? "Log In"
+                : "Create Account"}
             </Button>
           </div>
         </form>

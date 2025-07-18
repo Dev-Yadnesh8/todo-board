@@ -1,6 +1,8 @@
-function Button({ children, type = "button", onClick }) {
+function Button({ children, type = "button", onClick, disabled = false }) {
   return (
     <button
+      id="btn"
+      disabled={disabled}
       type={type}
       onClick={onClick && onClick}
       style={{
@@ -12,7 +14,9 @@ function Button({ children, type = "button", onClick }) {
         fontSize: "1rem",
         border: "none",
         borderRadius: "8px",
-        cursor: "pointer",
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.6 : 1,
+        transition: "opacity 0.2s ease",
       }}
     >
       {children}

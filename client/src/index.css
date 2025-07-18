@@ -9,3 +9,9 @@ html, body{
     height: 100%;
     width: 100%;
 }
+
+
+#button :disabled{
+    background: #a6aaf2;
+    cursor: wait;
+}
