@@ -7,18 +7,24 @@ import {
   Routes,
 } from "react-router-dom";
 import { Layout } from "./Components";
-import { AuthPage, Home, NotFoundPage } from "./Pages";
+import { AuthPage, Board, NotFoundPage } from "./Pages";
+import PublicOnlyRoute from "./Utils/route/PublicOnlyRoute";
+import PrivateRoute from "./Utils/route/PrivateRoute";
+import AuthGate from "./Utils/route/AuthGate";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Layout />}>
+    <Route path="/" element={<AuthGate />}>
+      <Route path="" element={<Layout />}>
         {/* PUBLIC */}
-      <Route path="" element={<AuthPage />} />
-      
-      <Route path="home" element={<Home />} />
+        <Route index element={<PublicOnlyRoute Component={AuthPage} />} />
 
-      {/* CATCH-ALL */}
-      <Route path="*" element={<NotFoundPage />} />
+        {/* PRIVATE */}
+        <Route path="board" element={<PrivateRoute Component={Board} />} />
+
+        {/* CATCH-ALL */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </Route>
   )
 );

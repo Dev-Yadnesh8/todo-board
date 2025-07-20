@@ -5,18 +5,22 @@ import { Button, InputField } from "../../Components";
 import { authSchema } from "../../Utils/Validators/auth.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../Utils/api/axios";
+
 import {
   SIGN_IN_ENPOINT,
   SIGN_UP_ENPOINT,
 } from "../../Utils/api/api_endpoints";
 import toast from "react-hot-toast";
 import handleApiError from "../../Utils/api/handle_api_error";
+import useStore from "../../store";
+import { useNavigate } from "react-router-dom";
 
 function AuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const { loader, setSignedIn } = useStore();
+  
   const {
     register,
     handleSubmit,
@@ -39,6 +43,10 @@ function AuthPage() {
         return;
       }
       toast.success(result.message);
+      if (isSignIn) {
+        setSignedIn(true);
+      }
+
       console.log("request successful", result.message);
     } catch (error) {
       handleApiError(error, isSignIn ? SIGN_IN_ENPOINT : SIGN_UP_ENPOINT);
@@ -54,6 +62,10 @@ function AuthPage() {
         })
       : await axiosInstance.post(SIGN_UP_ENPOINT, data);
   }
+
+  // if (loader) {
+  //   return <div>Loading....</div>;
+  // }
 
   return (
     <div
